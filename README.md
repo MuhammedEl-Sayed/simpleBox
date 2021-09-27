@@ -1,4 +1,4 @@
-#**DISCLAIMER: I'm still learning CSS/HTML/JS/React/R3F so go easy if shit is wonky, hopefully you can at least take inspiration**
+# **DISCLAIMER: I'm still learning CSS/HTML/JS/React/R3F so go easy if shit is wonky, hopefully you can at least take inspiration**
 # simpleBox
 ## Simple Cannon/Gesture Performance Trick (R3F)
 Simple fix for the fucky performance interaction between Cannon/Gesture.
