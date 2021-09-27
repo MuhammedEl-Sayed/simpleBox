@@ -36,7 +36,7 @@ export const SimpleBox = forwardRef((props, passedRef) => {
   }, []);
 
   let [currentPosx, currentPosy] = [0, 0];
-  
+  let [copyX, copyY] = [0, 0];
   const bind = useGesture({
     onDrag: ({ movement: [x, y], first: intial}) => {
 
