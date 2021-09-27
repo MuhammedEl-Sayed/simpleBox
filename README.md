@@ -1,7 +1,7 @@
 # **DISCLAIMER: I'm still learning CSS/HTML/JS/React/R3F so go easy if shit is wonky, hopefully you can at least take inspiration**
 # simpleBox
-## Simple Cannon/Gesture Performance Trick (R3F)
-Simple fix for the fucky performance interaction between Cannon/Gesture.
+## Simple R3F/Gesture Performance Trick (R3F)
+Simple fix for the fucky performance interaction between R3F/Gesture.
 
 ## How it works/How to use
 You use this component with another 3D mesh object. With the props you pass, it creates a Compoundbody set of colliders and creates simple box (for now) meshes for 
