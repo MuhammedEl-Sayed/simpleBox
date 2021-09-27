@@ -1,5 +1,5 @@
 # simpleBox
-## Simple Cannon/Gesture Performance Trick
+## Simple Cannon/Gesture Performance Trick (R3F)
 Simple fix for the fucky performance interaction between Cannon/Gesture.
 
 ## How it works/How to use
