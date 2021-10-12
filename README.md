@@ -4,8 +4,8 @@
 Simple fix for the fucky performance interaction between R3F/Gesture.
 
 ## How it works/How to use
-You use this component with another 3D mesh object. With the props you pass, it creates a Compoundbody set of colliders and creates simple box (for now) meshes for 
-detecting gestures. Feel free to get rid of the Cannon part if you have no need for it.
+You use this component with another 3D mesh object. With the props you pass, it creates simple boxes (for now) meshes from the collider array prop for 
+detecting gestures. 
 This way, way less needs to be calculated if you have a complex 3D mesh object and are applying gestures. 
 
 ## What you need to pass
@@ -16,37 +16,65 @@ This way, way less needs to be calculated if you have a complex 3D mesh object a
 5. Also add a ref to your Simplebox instance to make your original 3D object follow it. 
 
 ## Examples or something
-### Example of using useFrame to copy SimpleBox's position and rotation to imitate gestures and physics if using Cannon. 
+### Example of using useFrame to copy SimpleBox's position and rotation to imitate gestures.
 
 ```
-const ref = useRef();
-  const box = useRef();
+const box = useRef();
+  const position = useRef([0, 0, 0]);
+  const rot = useRef([0, 0, 0]);
+  const [ref, api] = useCompoundBody(() => ({
+    mass: 1,
+    position: [0, -15, 1],
+    rotation: [0, -Math.PI / 2, 0],
+    shapes: boxes,
+    ...props,
+  }));
+  useEffect(() => {
+    const unsubscribe = api.position.subscribe((v) => (position.current = v));
+    return unsubscribe;
+  }, []);
+  useEffect(() => {
+    const unsubscribe = api.rotation.subscribe((v) => (rot.current = v));
+    return unsubscribe;
+  }, []);
+  const [dragging, setDrag] = useState(false);
+  const [lastPos, setLastPos] = useState([0,0])
+  
   useFrame(() => {
-    box.current.position.x = ref.current.position.x;
-    box.current.position.y = ref.current.position.y;
-    box.current.position.z = ref.current.position.z;
-    box.current.rotation.x = -ref.current.rotation.x;
-    box.current.rotation.y = ref.current.rotation.y;
-    box.current.rotation.z = ref.current.rotation.z;
+    
+    if (dragging === false) {
+      box.current.position.set(
+        position.current[0],
+        position.current[1],
+        position.current[2]
+      ); //this isnt the problem
+      box.current.rotation.set(rot.current[0], rot.current[1], rot.current[2]); 
+      setLastPos([position.current[0], position.current[1]])
+      api.wakeUp();
+    }  if(dragging === true) {
+      
+      api.sleep();
+      api.position.copy(box.current.position);
+      api.rotation.copy(box.current.rotation);
+
+    }
   });
-  var boxes = [
-    { type: "Box", position: [0, -0.8, 0], args: [0.4, 7.2, 5.8] },
-    { type: "Box", position: [0, 3.2, -1.7], args: [0.4, 2.2, 2.4] },
-    { type: "Box", position: [0, 3.2, 1.7], args: [0.4, 2.2, 2.4] },
-    { type: "Box", position: [0, 4.0, 0], args: [0.4, 0.4, 0.9] },
-  ];
+  function handleChange(newValue) {
+    setDrag(newValue);
+  }
+  var boxes = HologramBoxes
 ```
 ### Example in DOM
 ```
-   <SimpleBox  ref = {ref}rotationInScreen={[0, Math.PI / 2, 0]} colliders={boxes} positionInScreen={[-8,-15,-1.2]}/>
-   <group ref={box} {...props} dispose={null} scale={1}>
-        <mesh
-          geometry={nodes.Cube.geometry}
-          material={nodes.Cube.material}
-          raycast={meshBounds}
-          scale={[0.15, 4.3, 2.9]}
-          castShadow
-          receiveShadow
-        />
-   </group>
+      <SimpleGeometry
+        ref={box}
+        colliders={boxes}
+        positionCol={[0, -15, 1]}
+        rotationCol={[0, -Math.PI / 2, 0]}
+        setDrag={handleChange}
+        lastPos={lastPos}
+      />
+      <group ref={ref} {...props} dispose={null}>
+        <mesh geometry={nodes.Sphere.geometry}raycast={meshBounds} material={materials.legs} />
+      </group>
 ```
